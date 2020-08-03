@@ -21,9 +21,23 @@ telegraf-docker uses `telegraf` configured with the `docker` input plugin and th
 
 ### test steps 
 ```
+docker network create test123
+
 docker-compose up --build
 
 curl -i -XPOST 'http://localhost:4080/test' --data-binary '{"value1": 42, "value2": 42}'
 
 ```
-# telegraf-fluentd-docker
+# fluent-docker
+
+```
+fluentd.conf for parser
+
+```
+# log generator 
+
+```
+modify docker-compose.yaml
+command: sh -c 'while true; do date +"%s provider=50"; sleep 10; done'
+
+```
