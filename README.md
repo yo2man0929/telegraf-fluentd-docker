@@ -23,15 +23,18 @@ telegraf-docker uses `telegraf` configured with the `docker` input plugin and th
 ```
 docker network create test123
 
+./athenz-user-cert
+
 docker-compose up --build
 
 curl -i -XPOST 'http://localhost:4080/test' --data-binary '{"value1": 42, "value2": 42}'
 
 ```
 ### fluent-docker
-
-```
 modify fluentd.conf 
+```
+ 
+expression /(?<timestamp>\S*)\sprovider=(?<cyang02>\d*)/
 
 ```
 ### log generator 
