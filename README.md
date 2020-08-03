@@ -41,3 +41,4 @@ modify docker-compose.yaml
 command: sh -c 'while true; do date +"%s provider=50"; sleep 10; done'
 
 ```
+### after running the dockers, check the collector-writer.log in you `PWD` folder
