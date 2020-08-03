@@ -28,16 +28,16 @@ docker-compose up --build
 curl -i -XPOST 'http://localhost:4080/test' --data-binary '{"value1": 42, "value2": 42}'
 
 ```
-# fluent-docker
+### fluent-docker
 
 ```
-fluentd.conf for parser
+modify fluentd.conf 
 
 ```
-# log generator 
-
-```
+### log generator 
 modify docker-compose.yaml
+```
+
 command: sh -c 'while true; do date +"%s provider=50"; sleep 10; done'
 
 ```
