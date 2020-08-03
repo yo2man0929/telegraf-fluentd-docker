@@ -1,0 +1,57 @@
+version: '3'
+services:
+  telegraf-docker:
+    build:
+       context:  .
+       dockerfile: Dockerfile
+    environment:
+      AGENT_DEBUG: "true"
+      YAMAS_OUTPUT_NAMESPACE: "NevecTW"
+      YAMAS_OUTPUT_EC2_TAGS_ENABLE: "false"
+      YAMAS_OUTPUT_TLS_ENABLE: "true"
+      YAMAS_OUTPUT_REFRESH_FREQUENCY: "0h"
+      YAMAS_OUTPUT_ENVIRONMENT: "private"
+      YAMAS_OUTPUT_TLS_CA : "/athenz/ca.cert.pem"
+      YAMAS_OUTPUT_TLS_KEY: "/athenz/key"
+      YAMAS_OUTPUT_TLS_CERT: "/athenz/cert" 
+    ports:
+      - "4080:4080"
+    volumes: 
+      - ~/.athenz:/athenz
+      - $PWD:/var/log/telegraf/
+    networks:
+      - test123
+
+  fluentd:
+    build: 
+      context: .
+      dockerfile: fluentDockerfile
+    depends_on: 
+      - telegraf-docker
+    ports:
+      - "24224:24224"
+    networks:
+      - test123
+
+    
+  logger:
+    image: alpine:latest
+    depends_on: 
+      - fluentd
+    #command: sh -c 'while true; do date +"[%a %d %b %Y %T,000 %z] provider=50, item=100, merchant=150 "; sleep 8; done'
+    command: sh -c 'while true; do date +"%s provider=50"; sleep 10; done'
+    depends_on: 
+      - fluentd
+      - telegraf-docker
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:24224
+        tag: logger
+    networks: 
+      - test123
+networks: 
+  test123:
+    external: true
+  
+
