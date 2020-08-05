@@ -39,7 +39,7 @@ services:
     depends_on: 
       - fluentd
     #command: sh -c 'while true; do date +"[%a %d %b %Y %T,000 %z] provider=50, item=100, merchant=150 "; sleep 8; done'
-    command: sh -c 'while true; do date +"%s dimensions=50" ; sleep 5 ;date +"%s dimensions=100" ; sleep 10; done'
+    command: sh -c 'while true; do date +"%s provider=50 array=test"; sleep 10; done'
     depends_on: 
       - fluentd
       - telegraf-docker
