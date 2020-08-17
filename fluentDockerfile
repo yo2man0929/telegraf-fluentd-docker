@@ -1,13 +1,27 @@
-FROM fluent/fluentd:latest
+FROM fluent/fluentd:v1.4.0-1.0
+
+USER root
 
 RUN apk add --no-cache --update --virtual .build-deps \
-        sudo build-base ruby-dev \
-        && sudo gem install fluent-plugin-route \
-        && sudo gem install fluent-plugin-out-http \
- && sudo gem sources --clear-all \
- && apk del .build-deps \
- && rm -rf /tmp/* /var/tmp/* /usr/lib/ruby/gems/*/cache/*.gem
+	sudo build-base ruby-dev \
+	&& sudo gem install fluent-plugin-splunk-hec -v 1.2.0 \
+	&& sudo gem install fluent-plugin-s3 fluent-plugin-http-heartbeat fluent-plugin-route fluent-plugin-rewrite-tag-filter fluent-plugin-record-modifier\
+	&& sudo gem install fluent-plugin-flowcounter fluent-plugin-concat fluent-plugin-out-http fluent-plugin-bufferize fluent-plugin-stats\
+	&& sudo gem sources --clear-all \
+	&& apk del .build-deps \
+	&& rm -rf /tmp/* /var/tmp/* /usr/lib/ruby/gems/*/cache/*.gem
 
-COPY fluent.conf /fluentd/etc/
+RUN apk add --no-cache --update curl jq python3 \
+    && rm -rf /var/cache/apk/*
+RUN apk add --no-cache --update py3-pip \
+	&& pip3 install awscli \
+	&& apk --purge -v del py3-pip \
+    && rm -rf /var/cache/apk/*
 
+COPY fluent.conf  /fluentd/etc/
+
+
+EXPOSE 9880
 EXPOSE 24224
+
+ENV FLUENTD_OPT=--use-v1-config

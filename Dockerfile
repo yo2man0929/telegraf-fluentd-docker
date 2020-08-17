@@ -12,7 +12,7 @@ RUN yum-config-manager --add-repo \
       yum install -y --disablerepo=* --enablerepo=yamas_rpms-latest --releasever=7Server telegraf
 
 RUN yum install -y https://artifactory.ouroath.com/artifactory/athens_rpms/rhel/7Server/current/x86_64/Packages/sia-2.33.4-1.el7.x86_64.rpm
-
+RUN rm /etc/telegraf/telegraf.d/*
 COPY files/telegraf.conf /etc/telegraf/
 COPY files/outputs.yamas.conf /etc/telegraf/telegraf.d/
 COPY files/inputs.http_listener_v2.conf /etc/telegraf/telegraf.d/

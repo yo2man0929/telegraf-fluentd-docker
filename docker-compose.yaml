@@ -13,45 +13,44 @@ services:
       YAMAS_OUTPUT_ENVIRONMENT: "private"
       YAMAS_OUTPUT_TLS_CA : "/athenz/ca.cert.pem"
       YAMAS_OUTPUT_TLS_KEY: "/athenz/key"
-      YAMAS_OUTPUT_TLS_CERT: "/athenz/cert" 
+      YAMAS_OUTPUT_TLS_CERT: "/athenz/cert"
     ports:
-      - "4080:4080"
-    volumes: 
+      - "4080:40800"
+    volumes:
       - ~/.athenz:/athenz
       - $PWD:/var/log/telegraf/
     networks:
       - test123
 
+
   fluentd:
-    build: 
+    build:
       context: .
       dockerfile: fluentDockerfile
-    depends_on: 
-      - telegraf-docker
+    # depends_on:
+    #   - telegraf-docker
     ports:
       - "24224:24224"
     networks:
       - test123
 
-    
+
   logger:
     image: alpine:latest
-    depends_on: 
-      - fluentd
     #command: sh -c 'while true; do date +"[%a %d %b %Y %T,000 %z] provider=50, item=100, merchant=150 "; sleep 8; done'
-    command: sh -c 'while true; do date +"%s provider=50 array=test"; sleep 10; done'
-    depends_on: 
+    command: sh -c 'while true; do date +"[AccessLog] 10.10.136.229 - - [11/Aug/2020:10:32:19 +0000] \"/status/aaa\" 200 0 \"-\" \"ELB-HealthChecker/2.0\" 1ms"; sleep 3; done'
+    depends_on:
       - fluentd
-      - telegraf-docker
+      # - telegraf-docker
     logging:
       driver: fluentd
       options:
         fluentd-address: localhost:24224
-        tag: logger
-    networks: 
+        tag: gatekeeper-int
+    networks:
       - test123
-networks: 
+networks:
   test123:
-    external: true
-  
+    # external: true
+
 
